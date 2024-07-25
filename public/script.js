@@ -13,7 +13,12 @@ document.getElementById('searchForm').addEventListener('submit', function(event)
             keywords: keywords.split(',')
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         const linksDiv = document.getElementById('links');
         linksDiv.innerHTML = '';
@@ -24,5 +29,10 @@ document.getElementById('searchForm').addEventListener('submit', function(event)
             a.target = '_blank';
             linksDiv.appendChild(a);
         });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const linksDiv = document.getElementById('links');
+        linksDiv.innerHTML = `<p>Error: ${error.message}</p>`;
     });
 });
